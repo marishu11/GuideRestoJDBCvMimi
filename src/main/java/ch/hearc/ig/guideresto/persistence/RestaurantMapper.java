@@ -160,5 +160,28 @@ public class RestaurantMapper extends AbstractMapper<Restaurant> {
       //todo ajouter les appels à d'autres mappers
       City city = new CityMapper().findById(cityId);
       RestaurantType type = new RestaurantTypeMapper().findById(typeId);
+      
+      return new Restaurant(id, name, adresse, description, website, city, type);
+   }
+   
+   //Cache
+   @Override
+   protected boolean isCacheEmpty() {
+      return cache.isEmpty();
+   }
+   
+   @Override
+   protected void resetCache() {
+      cache.clear();
+   }
+   
+   @Override
+   protected void addToCache(Restaurant r){
+      cache.put(r.getId(), r);
+   }
+   
+   @Override
+   protected void removeFromCache(Integer id){
+      cache.remove(id);
    }
 }
