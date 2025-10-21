@@ -7,25 +7,25 @@ import java.sql.*;
 import java.util.*;
 public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    private static final Logger logger = LogManager.getLogger(RestaurantTypeMapper.class);
-   private static final String TABLE_NAME = "types_restaurants";
+   private static final String TABLE_NAME = "types_gastronomiques";
    
    private final Map<Integer, RestaurantType> cache = new HashMap<>();
    
    // --- Requêtes SQL ---
    private static final String FIND_BY_ID =
-           "SELECT numero, libelle, description FROM types_restaurants WHERE numero = ?";
+           "SELECT numero, libelle, description FROM types_gastronomiques WHERE numero = ?";
    
    private static final String FIND_ALL =
-           "SELECT numero, libelle, description FROM types_restaurants";
+           "SELECT numero, libelle, description FROM types_gastronomiques";
    
    private static final String INSERT =
-           "INSERT INTO types_restaurants (numero, libelle, description) VALUES (?, ?, ?)";
+           "INSERT INTO types_gastronomiques (numero, libelle, description) VALUES (?, ?, ?)";
    
    private static final String UPDATE =
-           "UPDATE types_restaurants SET libelle = ?, description = ? WHERE numero = ?";
+           "UPDATE types_gastronomiques SET libelle = ?, description = ? WHERE numero = ?";
    
    private static final String DELETE =
-           "DELETE FROM types_restaurants WHERE numero = ?";
+           "DELETE FROM types_gastronomiques WHERE numero = ?";
    
    
    // --- Implémentations AbstractMapper ---
@@ -135,17 +135,17 @@ public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    // --- Requêtes pour AbstractMapper ---
    @Override
    protected String getSequenceQuery() {
-      return "SELECT seq_types_restaurants.nextval FROM dual";
+      return "SELECT seq_types_gastronomiques.nextval FROM dual";
    }
    
    @Override
    protected String getExistsQuery() {
-      return "SELECT 1 FROM types_restaurants WHERE numero = ?";
+      return "SELECT 1 FROM types_gastronomiques WHERE numero = ?";
    }
    
    @Override
    protected String getCountQuery() {
-      return "SELECT COUNT(*) FROM types_restaurants";
+      return "SELECT COUNT(*) FROM types_gastronomiques";
    }
    
    // --- Mapping d'une ligne SQL vers un objet RestaurantType ---
