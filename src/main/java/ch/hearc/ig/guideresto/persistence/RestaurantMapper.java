@@ -6,9 +6,8 @@ import java.sql.*;
 import java.util.*;
 public class RestaurantMapper extends AbstractMapper<Restaurant> {
    private static final Logger logger = LogManager.getLogger(RestaurantMapper.class);
-   private static final String TABLE_NAME = "restaurants";
    
-   private Map<Integer, Restaurant> cache = new HashMap<>();
+   private final Map<Integer, Restaurant> cache = new HashMap<>();
    
    //requêtes SQL
    private static final String findByID =
@@ -27,8 +26,10 @@ public class RestaurantMapper extends AbstractMapper<Restaurant> {
    @Override
    public Restaurant findById(int id) {
       if (cache.containsKey(id)) return cache.get(id);
-      Connection conn = ConnectionUtils.getConnection();
-      try (PreparedStatement stmt = conn.prepareStatement(findByID)) {
+      
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(findByID)) {
+         
          stmt.setInt(1, id);
          try (ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
@@ -46,8 +47,9 @@ public class RestaurantMapper extends AbstractMapper<Restaurant> {
    @Override
    public Set<Restaurant> findAll() {
       Set<Restaurant> restaurants = new HashSet<>();
-      Connection conn = ConnectionUtils.getConnection();
-      try (PreparedStatement stmt = conn.prepareStatement(findAll);
+      
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(findAll);
            ResultSet rs = stmt.executeQuery()) {
          while (rs.next()) {
             Restaurant r = mapRowToRestaurant(rs);
@@ -62,10 +64,11 @@ public class RestaurantMapper extends AbstractMapper<Restaurant> {
    
    @Override
    public Restaurant create(Restaurant restaurant) {
-      Connection conn = ConnectionUtils.getConnection();
+      
       //"INSERT INTO restaurants (numero, nom, adresse, description, site_web, fk_type, fk_vill) VALUES (?,?,?,?,?,?)";
       int id = getSequenceValue(); //récupérationd d'une séquence oracle
-      try (PreparedStatement stmt = conn.prepareStatement(insertRestaurant)) {
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(insertRestaurant)) {
          stmt.setInt(1, id);
          stmt.setString(2, restaurant.getName());
          stmt.setString(3, restaurant.getAddress().getStreet());
@@ -88,9 +91,10 @@ public class RestaurantMapper extends AbstractMapper<Restaurant> {
    
    @Override
    public boolean update(Restaurant restaurant) {
-      Connection conn = ConnectionUtils.getConnection();
+      
       //"UPDATE restaurants SET nom=?, adresse=?,description=?, site_web=?, fk_type=?, fk_vill=? WHERE numero=?";
-      try (PreparedStatement stmt = conn.prepareStatement(updateRestaurant)) {
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(updateRestaurant)) {
          stmt.setString(1, restaurant.getName());
          stmt.setString(2, restaurant.getAddress().getStreet());
          stmt.setString(3, restaurant.getDescription());
@@ -116,9 +120,9 @@ public class RestaurantMapper extends AbstractMapper<Restaurant> {
    
    @Override
    public boolean deleteById(int id) {
-      Connection conn = ConnectionUtils.getConnection();
       
-      try (PreparedStatement stmt = conn.prepareStatement(deleteRestaurant)) {
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(deleteRestaurant)) {
          stmt.setInt(1, id);
          int rows = stmt.executeUpdate();
          if (rows > 0) {

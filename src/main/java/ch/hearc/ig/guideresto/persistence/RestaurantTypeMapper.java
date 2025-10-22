@@ -7,7 +7,6 @@ import java.sql.*;
 import java.util.*;
 public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    private static final Logger logger = LogManager.getLogger(RestaurantTypeMapper.class);
-   private static final String TABLE_NAME = "types_gastronomiques";
    
    private final Map<Integer, RestaurantType> cache = new HashMap<>();
    
@@ -52,13 +51,13 @@ public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    @Override
    public Set<RestaurantType> findAll() {
       Set<RestaurantType> types = new HashSet<>();
-      Connection conn = ConnectionUtils.getConnection();
       
-      try (PreparedStatement stmt = conn.prepareStatement(FIND_ALL);
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(FIND_ALL);
            ResultSet rs = stmt.executeQuery()) {
          
          while (rs.next()) {
-            RestaurantType t = mapRowToRestaurantType(rs);
+            RestaurantType t = mapRowtoRestaurant(rs);
             types.add(t);
             cache.put(t.getId(), t);
          }
@@ -70,10 +69,11 @@ public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    
    @Override
    public RestaurantType create(RestaurantType type) {
-      Connection conn = ConnectionUtils.getConnection();
+      
       int id = getSequenceValue();
       
-      try (PreparedStatement stmt = conn.prepareStatement(INSERT)) {
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(INSERT)) {
          stmt.setInt(1, id);
          stmt.setString(2, type.getLabel());
          stmt.setString(3, type.getDescription());
@@ -92,9 +92,9 @@ public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    
    @Override
    public boolean update(RestaurantType type) {
-      Connection conn = ConnectionUtils.getConnection();
       
-      try (PreparedStatement stmt = conn.prepareStatement(UPDATE)) {
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(UPDATE)) {
          stmt.setString(1, type.getLabel());
          stmt.setString(2, type.getDescription());
          stmt.setInt(3, type.getId());
@@ -117,9 +117,9 @@ public class RestaurantTypeMapper extends AbstractMapper<RestaurantType>{
    
    @Override
    public boolean deleteById(int id) {
-      Connection conn = ConnectionUtils.getConnection();
       
-      try (PreparedStatement stmt = conn.prepareStatement(DELETE)) {
+      try (Connection conn = ConnectionUtils.getConnection();
+           PreparedStatement stmt = conn.prepareStatement(DELETE)) {
          stmt.setInt(1, id);
          int rows = stmt.executeUpdate();
          if (rows > 0) {
